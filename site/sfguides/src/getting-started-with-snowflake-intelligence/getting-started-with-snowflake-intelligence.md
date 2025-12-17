@@ -75,7 +75,10 @@ This tool enables the agent to query structured data in Snowflake by generating 
 * In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Analyst**</a>
 * On the top right, click on **Create new** down arrow and select **Upload your YAML file** 
 * Upload [marketing_campaigns.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/marketing_campaigns.yaml) | Select database, schema, and stage: **DASH_DB_SI.RETAIL** >> **SEMANTIC_MODELS** 
-* On the top right, click on **Save** 
+* On the top right, click on **Save**
+* Once the "Valid semantic model. Ready to answer your question is displayed.", click "Open Playground" and ask a question like:
+  - Explain the dataset
+  - Show me the trend of sales by product category between June 2025 and August 2025
 
 ### Cortex Search
 
@@ -91,6 +94,10 @@ This tool allows the agent to search and retrieve information from unstructured 
     - Select attribute column(s): select TITLE, PRODUCT 
     - Select columns to include in the service: Select all
     - Configure your Search Service: Keep default values **except** select **DASH_WH_SI** for "Warehouse for indexing" (Choose COMPUTE_WH if DASH_WH_SI is not available)
+    - Confirm "Serving" and "Indexing" states are both "Active". If it's not updating, click the refresh button in the top right hand corner.
+ * Select "Playground" button in the top right corner and ask a question like:
+   - Show me all the tickets relating to clothing products
+   - Show me all tickets that talk about any damage, defects
 
 #### OPTIONAL: Aggregated Support Cases using Cortex AISQL
 
@@ -127,6 +134,14 @@ as (
 ```
 > NOTE: These SQL statements may take 3-5 minutes to run.
 
+### Optional: Setting Up User Defined Functions
+User Defined Functions (UDF) are custom SQL invoked routines that allows the users to extend upon built-in functionality. UDF can be written with many different supported methods and languages. 
+
+* In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [udf-udtf.sql](NEED TO UPDATE) to execute all statements in order from top to bottom. Running the statement will execute:
+  - Creating a simple UDF that rounds a FLOAT to the nearest whole number
+  - Creating a simple UDTF (user defined table functions) that will create a new column that stores the average price per unit of product
+  - Create a view that leverages the AvgPricePerUnitProductPerSale UDTF to generate a table. Then, apply the RoundToWhole UDF to the avg_price_per_unit column from that table, creating a rounded_avg_price_per_unit.
+  - Creates a new table PRODUCTS_WITH_AVG_PRICE that joins the PRODUCTS table with the average price, which is the average of the rounded average prices of each product per sale for all regions from the VIEW that we created. 
 
 ### Create Agent
 
@@ -189,7 +204,27 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
         - Description: *If the email is not provided, send it to the current user's email address.*
       - Parameter: subject
         - Description: *If the subject is not provided, use "Snowflake Intelligence".*
-      
+        - Click "Add"
+
+          
+    - Click on **+ Add**
+
+      - Resource type: function
+      - Database & Schema: **DASH_DB_SI.RETAIL**
+      - Custom tool identifier: **DASH_DB_SI.RETAIL.ROUNDTOWHOLE (FLOAT)**
+      - Name: Round_Float_To_Whole
+      - Query timeout: 60
+      - Click "Add"
+     
+    - Click on **+ Add**
+
+      - Resource type: function
+      - Database & Schema: **DASH_DB_SI.RETAIL**
+      - Custom tool identifier: **DASH_DB_SI.RETAIL.AvgPricePerUnitProductPerSale()**
+      - Name: Calculate_Avg_Price_Per_Product
+      - Query timeout: 60
+      - Click "Add"
+
 
 * Orchestration Instructions: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
 
