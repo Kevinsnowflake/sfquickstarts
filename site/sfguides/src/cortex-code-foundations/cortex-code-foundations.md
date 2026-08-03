@@ -65,7 +65,7 @@ There are several ways to authenticate your connection. Common environment varia
 | `SNOWFLAKE_TOKEN_FILE_PATH` | Path to token file |
 | `SNOWFLAKE_OAUTH_CLIENT_ID` | OAuth client ID |
 
-For a full list, see the [Manage Snowflake connections guide](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections).
+For a full list, see the [Manage Snowflake connections guide](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections). 
 
 <!-- ------------------------ -->
 ## Install the CoCo CLI on Mac
